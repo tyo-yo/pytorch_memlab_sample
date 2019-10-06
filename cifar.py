@@ -5,6 +5,7 @@ from torch import nn
 import torch.nn.functional as F
 import torch.optim as optim
 from pytorch_memlab import profile, MemReporter
+import click
 
 class Net(nn.Module):
     def __init__(self):
@@ -34,7 +35,8 @@ class Net(nn.Module):
 def backward(outputs):
     outputs['loss'].backward()
 
-def main():
+@click.option('--verbose', '-v', is_flag=True)
+def main(verbose):
     transform = transforms.Compose(
         [transforms.ToTensor(),
          transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
@@ -52,7 +54,7 @@ def main():
     optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 
     reporter = MemReporter(net)
-    reporter.report(verbose=True)
+    reporter.report(verbose=verbose)
     print('\nStart Training\n')
 
     for epoch in range(1):
@@ -67,7 +69,7 @@ def main():
             optimizer.step()
 
     print('\nTraining Finished\n')
-    reporter.report(verbose=True)
+    reporter.report(verbose=verbose)
 
 if __name__ == '__main__':
     main()
