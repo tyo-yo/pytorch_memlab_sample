@@ -15,16 +15,21 @@ class Net(nn.Module):
         self.fc1 = nn.Linear(16 * 5 * 5, 12000)
         self.fc2 = nn.Linear(12000, 84)
         self.fc3 = nn.Linear(84, 10)
+        self.criterion = nn.CrossEntropyLoss()
 
     @profile
-    def forward(self, x):
+    def forward(self, x, labels=None):
         x = self.pool(F.relu(self.conv1(x)))
         x = self.pool(F.relu(self.conv2(x)))
         x = x.view(-1, 16 * 5 * 5)
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
-        x = self.fc3(x)
-        return x
+        y = self.fc3(x)
+        outputs = {'y': y}
+        if labels:
+            outputs['loss'] = self.criterion(x, labels)
+
+        return outputs
 
 
 def main():
@@ -42,7 +47,6 @@ def main():
                                               num_workers=2)
 
     net = Net().cuda()
-    criterion = nn.CrossEntropyLoss().cuda()
     optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 
     for epoch in range(1):  # loop over the dataset multiple times
@@ -54,11 +58,10 @@ def main():
             optimizer.zero_grad()
 
             outputs = net(inputs)
-            loss = criterion(outputs, labels)
-            loss.backward()
+            outputs['loss'].backward()
             optimizer.step()
 
-            running_loss += loss.item()
+            running_loss += outputs['loss'].item()
             if i % 100 == 0:
                 print(f'[%d, %5d] loss: %.3f' % (epoch + 1, i + 1, running_loss / 100))
                 running_loss = 0.0
