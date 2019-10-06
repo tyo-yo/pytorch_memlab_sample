@@ -20,21 +20,14 @@ class Net(nn.Module):
     @profile
     def forward(self, x, labels=None):
         x = self.pool(F.relu(self.conv1(x)))
-        1 + 1
         x = self.pool(F.relu(self.conv2(x)))
-        1 + 1
         x = x.view(-1, 16 * 5 * 5)
-        1 + 1
         x = F.relu(self.fc1(x))
-        1 + 1
         x = F.relu(self.fc2(x))
-        1 + 1
         y = self.fc3(x)
-        1 + 1
         outputs = {'y': y}
         if labels is not None:
             outputs['loss'] = self.criterion(x, labels)
-
         return outputs
 
 @profile
@@ -58,14 +51,11 @@ def main():
     net = Net().cuda()
     optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 
-
     reporter = MemReporter(net)
     reporter.report(verbose=True)
+    print('\nStart Training\n')
 
-    print('Start Training')
-
-    for epoch in range(1):  # loop over the dataset multiple times
-        running_loss = 0.0
+    for epoch in range(1):
         for i, data in enumerate(trainloader, 0):
 
             inputs, labels = data
@@ -76,12 +66,7 @@ def main():
             backward(outputs)
             optimizer.step()
 
-            running_loss += outputs['loss'].item()
-            if i % 100 == 0:
-                print(f'[%d, %5d] loss: %.3f' % (epoch + 1, i + 1, running_loss / 100))
-                running_loss = 0.0
-
-    print('Training Finished')
+    print('\nTraining Finished\n')
     reporter.report(verbose=True)
 
 if __name__ == '__main__':
