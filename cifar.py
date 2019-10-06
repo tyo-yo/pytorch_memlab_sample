@@ -18,6 +18,7 @@ class Net(nn.Module):
         self.fc3 = nn.Linear(84, 10)
         self.criterion = nn.CrossEntropyLoss()
 
+    # 1行命令が実行されるたびに、占有メモリの総量がどのように変化するか追跡できる
     @profile
     def forward(self, x, labels=None):
         x = self.pool(F.relu(self.conv1(x)))
@@ -31,6 +32,7 @@ class Net(nn.Module):
             outputs['loss'] = self.criterion(x, labels)
         return outputs
 
+# デコレータ内の各行を追跡するので、逆伝播はやむなく関数にした。mainにデコレータをつけてもいいかも？
 @profile
 def backward(outputs):
     outputs['loss'].backward()
@@ -56,6 +58,7 @@ def main(verbose):
     optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 
     reporter = MemReporter(net)
+    # 訓練前にレポートすることで、モデルのアーキテクチャが使っているメモリがわかる。
     reporter.report(verbose=verbose)
     print('\nStart Training\n')
 
@@ -71,6 +74,8 @@ def main(verbose):
             optimizer.step()
 
     print('\nTraining Finished\n')
+
+    # 訓練後にレポートすることで、勾配や流れたデータ(x,yなど)が使用したメモリがわかる。
     reporter.report(verbose=verbose)
 
 
