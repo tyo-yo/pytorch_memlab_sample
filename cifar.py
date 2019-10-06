@@ -4,7 +4,7 @@ import torchvision.transforms as transforms
 from torch import nn
 import torch.nn.functional as F
 import torch.optim as optim
-from pytorch_memlab import profile
+from pytorch_memlab import profile, MemReporter
 
 class Net(nn.Module):
     def __init__(self):
@@ -52,6 +52,12 @@ def main():
     net = Net().cuda()
     optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 
+
+    reporter = MemReporter(net)
+    reporter.report(verbose=True)
+
+    print('Start Training')
+
     for epoch in range(1):  # loop over the dataset multiple times
         running_loss = 0.0
         for i, data in enumerate(trainloader, 0):
@@ -69,6 +75,8 @@ def main():
                 print(f'[%d, %5d] loss: %.3f' % (epoch + 1, i + 1, running_loss / 100))
                 running_loss = 0.0
 
+    print('Training Finished')
+    reporter.report(verbose=True)
 
 if __name__ == '__main__':
     main()
