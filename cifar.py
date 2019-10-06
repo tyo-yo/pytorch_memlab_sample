@@ -31,6 +31,9 @@ class Net(nn.Module):
 
         return outputs
 
+@profile
+def backward(outputs):
+    outputs['loss'].backward()
 
 def main():
     transform = transforms.Compose(
@@ -42,7 +45,7 @@ def main():
                                             download=True,
                                             transform=transform)
     trainloader = torch.utils.data.DataLoader(trainset,
-                                              batch_size=4,
+                                              batch_size=256,
                                               shuffle=True,
                                               num_workers=2)
 
@@ -58,14 +61,13 @@ def main():
             optimizer.zero_grad()
 
             outputs = net(inputs, labels)
-            outputs['loss'].backward()
+            backward()
             optimizer.step()
 
             running_loss += outputs['loss'].item()
             if i % 100 == 0:
                 print(f'[%d, %5d] loss: %.3f' % (epoch + 1, i + 1, running_loss / 100))
                 running_loss = 0.0
-            break # 実際に訓練は回さない
 
 
 if __name__ == '__main__':
