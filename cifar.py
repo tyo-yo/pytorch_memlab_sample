@@ -26,7 +26,7 @@ class Net(nn.Module):
         x = F.relu(self.fc2(x))
         y = self.fc3(x)
         outputs = {'y': y}
-        if labels:
+        if labels is not None:
             outputs['loss'] = self.criterion(x, labels)
 
         return outputs
