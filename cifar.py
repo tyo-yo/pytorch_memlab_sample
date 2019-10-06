@@ -35,6 +35,8 @@ class Net(nn.Module):
 def backward(outputs):
     outputs['loss'].backward()
 
+
+@click.command()
 @click.option('--verbose', '-v', is_flag=True)
 def main(verbose):
     transform = transforms.Compose(
@@ -70,6 +72,7 @@ def main(verbose):
 
     print('\nTraining Finished\n')
     reporter.report(verbose=verbose)
+
 
 if __name__ == '__main__':
     main()
