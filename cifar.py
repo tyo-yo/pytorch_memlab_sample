@@ -41,15 +41,16 @@ def main():
                                               shuffle=True,
                                               num_workers=2)
 
-    net = Net()
-    criterion = nn.CrossEntropyLoss()
+    net = Net().cuda()
+    criterion = nn.CrossEntropyLoss().cuda()
     optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 
-    for epoch in range(2):  # loop over the dataset multiple times
+    for epoch in range(1):  # loop over the dataset multiple times
         running_loss = 0.0
         for i, data in enumerate(trainloader, 0):
 
             inputs, labels = data
+            inputs, labels = inputs.cuda(), labels.cuda()
             optimizer.zero_grad()
 
             outputs = net(inputs)
@@ -58,11 +59,10 @@ def main():
             optimizer.step()
 
             running_loss += loss.item()
-            if i % 2000 == 1999:    # print every 2000 mini-batches
-                print(f'[%d, %5d] loss: %.3f' % (epoch + 1, i + 1, running_loss / 2000))
+            if i % 100 == 0:
+                print(f'[%d, %5d] loss: %.3f' % (epoch + 1, i + 1, running_loss / 100))
                 running_loss = 0.0
-
-    print('Finished Training')
+            break # 実際に訓練は回さない
 
 
 if __name__ == '__main__':
