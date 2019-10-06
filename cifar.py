@@ -61,7 +61,7 @@ def main():
             optimizer.zero_grad()
 
             outputs = net(inputs, labels)
-            backward()
+            backward(outputs)
             optimizer.step()
 
             running_loss += outputs['loss'].item()
