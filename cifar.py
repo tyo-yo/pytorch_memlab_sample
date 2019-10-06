@@ -5,7 +5,7 @@ from torch import nn
 import torch.nn.functional as F
 import torch.optim as optim
 from pytorch_memlab import profile, MemReporter
-import click
+
 
 class Net(nn.Module):
     def __init__(self):
@@ -38,9 +38,7 @@ def backward(outputs):
     outputs['loss'].backward()
 
 
-@click.command()
-@click.option('--verbose', '-v', is_flag=True)
-def main(verbose):
+def main():
     transform = transforms.Compose(
         [transforms.ToTensor(),
          transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
@@ -59,7 +57,7 @@ def main(verbose):
 
     reporter = MemReporter(net)
     # 訓練前にレポートすることで、モデルのアーキテクチャが使っているメモリがわかる。
-    reporter.report(verbose=verbose)
+    reporter.report()
     print('\nStart Training\n')
 
     for epoch in range(1):
@@ -76,7 +74,7 @@ def main(verbose):
     print('\nTraining Finished\n')
 
     # 訓練後にレポートすることで、勾配や流れたデータ(x,yなど)が使用したメモリがわかる。
-    reporter.report(verbose=verbose)
+    reporter.report()
 
 
 if __name__ == '__main__':
