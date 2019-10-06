@@ -57,7 +57,7 @@ def main():
             inputs, labels = inputs.cuda(), labels.cuda()
             optimizer.zero_grad()
 
-            outputs = net(inputs)
+            outputs = net(inputs, labels)
             outputs['loss'].backward()
             optimizer.step()
 
