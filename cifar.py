@@ -20,11 +20,17 @@ class Net(nn.Module):
     @profile
     def forward(self, x, labels=None):
         x = self.pool(F.relu(self.conv1(x)))
+        1 + 1
         x = self.pool(F.relu(self.conv2(x)))
+        1 + 1
         x = x.view(-1, 16 * 5 * 5)
+        1 + 1
         x = F.relu(self.fc1(x))
+        1 + 1
         x = F.relu(self.fc2(x))
+        1 + 1
         y = self.fc3(x)
+        1 + 1
         outputs = {'y': y}
         if labels is not None:
             outputs['loss'] = self.criterion(x, labels)
