@@ -4,7 +4,7 @@
 
 Qiitaの記事は[こちら](https://qiita.com/tyo_yo_/items/5f2c41e0dbea9276f42b)
 
-![](https://i.imgur.com/AwnSXWN.png)
+![](https://i.imgur.com/6EY2jWZ.png)
 
 
 
